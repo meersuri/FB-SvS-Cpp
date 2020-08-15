@@ -17,6 +17,7 @@ int main()
 	std::string ref_seq (ref_seq_len, alphabet[0]);
 	for(int i = 0; i < ref_seq_len; ++i)
 		ref_seq[i] = alphabet[distribution(generator)];
+	std::cout << "referece sequence -" << std::endl;
 	for(int i = 0; i < ref_seq_len; ++i)
 		std::cout << ref_seq[i];
 	std::cout<<std::endl;
@@ -24,6 +25,7 @@ int main()
 	std::vector<std::string> code;
 	gen_k_grams_code(3, alphabet, code);
 	build_index(ref_seq, code, index);
+	std::cout << "index (key, posting list size) -" << std::endl;
 	for(auto it = index.begin(); it != index.end(); ++it)
 	{
 		std::vector<size_t>& vec = it->second;

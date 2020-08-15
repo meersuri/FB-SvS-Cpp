@@ -95,3 +95,24 @@ void parse_query_bwd(std::string query, std::unordered_map<std::string, std::vec
 	}
 	sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
 }
+
+void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<size_t>& match_pos)
+{
+	match_pos = index.at(std::get<0>(parsing[0]));
+	for(int i = 1; i < parsing.size(); ++i)
+	{
+		std::vector<size_t> found;
+		int d = std::get<2>(parsing[i]) - std::get<2>(parsing[0]);
+		for(int j = 0; j < match_pos.size(); ++j)
+		{
+			std::vector<size_t>& posting_list = index.at(std::get<0>(parsing[i]));
+			size_t key = match_pos[j] + d;
+			auto it = std::lower_bound(posting_list.begin(), posting_list.end(), key);
+			if(*it == key)
+				found.push_back(match_pos[j]);
+		}
+		size_t n = found.size();
+		std::move(found.begin(), found.end(), match_pos.begin());
+		match_pos.resize(n);
+	}
+}

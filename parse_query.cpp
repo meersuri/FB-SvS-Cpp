@@ -19,6 +19,7 @@ int main()
 	std::string ref_seq (ref_seq_len, alphabet[0]);
 	for(int i = 0; i < ref_seq_len; ++i)
 		ref_seq[i] = alphabet[distribution(generator)];
+	std::cout << "referece sequence -" << std::endl;
 	for(int i = 0; i < ref_seq_len; ++i)
 		std::cout << ref_seq[i];
 	std::cout<<std::endl;
@@ -31,14 +32,17 @@ int main()
 	std::string query(query_len, alphabet[0]);
 	for(int i = 0; i < query_len; ++i)
 		query[i] = alphabet[distribution(generator)];
+	std::cout << "query sequence -" << std::endl;
 	std::cout << query << std::endl;
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_fwd;
 	parse_query_fwd(query, index, parsing_fwd);
+	std::cout << "query forward parse - (code word, posting list length, index)" << std::endl;
 	for(int i = 0; i < parsing_fwd.size(); ++i)
 		std::cout << std::get<0>(parsing_fwd[i]) << " " << std::get<1>(parsing_fwd[i]) << " " << std::get<2>(parsing_fwd[i]) << std::endl;
 	std::cout << std::endl;
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_bwd;
 	parse_query_bwd(query, index, parsing_bwd);
+	std::cout << "query backward parse - (code word, posting list length, index)" << std::endl;
 	for(int i = 0; i < parsing_bwd.size(); ++i)
 		std::cout << std::get<0>(parsing_bwd[i]) << " " << std::get<1>(parsing_bwd[i]) << " " << std::get<2>(parsing_bwd[i]) << std::endl;
 	std::cout << std::endl;
