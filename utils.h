@@ -47,8 +47,9 @@ void build_index(std::string& ref_seq, std::vector<std::string>& code, std::unor
 	}
 }
 
-void parse_query_fwd(const std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
+size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
+	size_t start = query.size();
 	int i = 0;
 	while(i < query.size())
 	{
@@ -60,6 +61,8 @@ void parse_query_fwd(const std::string& query, std::unordered_map<std::string, s
 			if(it != index.end())
 			{
 				parsing.push_back(std::make_tuple(substr, index[substr].size(), i));
+				if(i < start)
+					start = i;
 				i = j + 1;
 				break;
 			}
@@ -69,10 +72,12 @@ void parse_query_fwd(const std::string& query, std::unordered_map<std::string, s
 			break;
 	}
 	sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	return start;
 }
 
-void parse_query_bwd(std::string query, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
+size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
+	size_t start = query.size();
 	int i = query.size() - 1;
 	while(i >= 0)
 	{
@@ -85,6 +90,8 @@ void parse_query_bwd(std::string query, std::unordered_map<std::string, std::vec
 			{
 				parsing.push_back(std::make_tuple(substr, index[substr].size(), j));
 				i = j - 1;
+				if(j < start)
+					start = j;
 				break;
 			}
 			--j;
@@ -93,9 +100,10 @@ void parse_query_bwd(std::string query, std::unordered_map<std::string, std::vec
 			break;
 	}
 	sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	return start;
 }
 
-void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<size_t>& match_pos)
+void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<size_t>& match_pos, size_t start)
 {
 	match_pos = index.at(std::get<0>(parsing[0]));
 	for(int i = 1; i < parsing.size(); ++i)
@@ -114,4 +122,6 @@ void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::uno
 		std::move(found.begin(), found.end(), match_pos.begin());
 		match_pos.resize(n);
 	}
+	for(int i = 0; i < match_pos.size(); ++i)
+		match_pos[i] -= std::get<2>(parsing[0]) - start;
 }

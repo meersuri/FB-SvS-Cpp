@@ -35,12 +35,12 @@ int main()
 	std::cout << "query sequence -" << std::endl;
 	std::cout << query << std::endl;
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing;
-	parse_query_fwd(query, index, parsing);
+	size_t fwd_parse_start = parse_query_fwd(query, index, parsing);
 	std::cout << "query forward parse - (code word, posting list length, index)" << std::endl;
 	for(int i = 0; i < parsing.size(); ++i)
 		std::cout << std::get<0>(parsing[i]) << " " << std::get<1>(parsing[i]) << " " << std::get<2>(parsing[i]) << std::endl;
 	std::vector<size_t> match_pos;
-	svs(parsing, index, match_pos);
+	svs(parsing, index, match_pos, fwd_parse_start);
 	std::cout << "svs output - " << std::endl;
 	for(int i = 0; i < match_pos.size(); ++i)
 		std::cout << match_pos[i] << " ";
