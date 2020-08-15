@@ -73,24 +73,23 @@ void parse_query_fwd(const std::string& query, std::unordered_map<std::string, s
 
 void parse_query_bwd(std::string query, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
-	std::reverse(query.begin(), query.end());
-	int i = 0;
-	while(i < query.size())
+	int i = query.size() - 1;
+	while(i >= 0)
 	{
 		int j = i;
-		while(j < query.size())
+		while(j >= 0)
 		{
-			std::string substr = query.substr(i, j - i + 1);
+			std::string substr = query.substr(j, i - j + 1);
 			auto it = index.find(substr);
 			if(it != index.end())
 			{
-				parsing.push_back(std::make_tuple(substr, index[substr].size(), query.size() - i - 1));
-				i = j + 1;
+				parsing.push_back(std::make_tuple(substr, index[substr].size(), j));
+				i = j - 1;
 				break;
 			}
-			++j;
+			--j;
 		}
-		if(j == query.size())
+		if(j == -1)
 			break;
 	}
 	sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
