@@ -125,3 +125,64 @@ void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::uno
 	for(int i = 0; i < match_pos.size(); ++i)
 		match_pos[i] -= std::get<2>(parsing[0]) - start;
 }
+
+int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<size_t>& match_pos) 
+{
+	std::vector<std::tuple<std::string, size_t, size_t>> parsing_fwd;
+	std::vector<std::tuple<std::string, size_t, size_t>> parsing_bwd;
+	size_t fwd_parse_start = parse_query_fwd(query, index, parsing_fwd);
+	std::cout << "query forward parse - (code word, posting list length, index)" << std::endl;
+	for(int i = 0; i < parsing_fwd.size(); ++i)
+		std::cout << std::get<0>(parsing_fwd[i]) << " " << std::get<1>(parsing_fwd[i]) << " " << std::get<2>(parsing_fwd[i]) << std::endl;
+	size_t bwd_parse_start = parse_query_bwd(query, index, parsing_bwd);
+	std::cout << "query backward parse - (code word, posting list length, index)" << std::endl;
+	for(int i = 0; i < parsing_bwd.size(); ++i)
+		std::cout << std::get<0>(parsing_bwd[i]) << " " << std::get<1>(parsing_bwd[i]) << " " << std::get<2>(parsing_bwd[i]) << std::endl;
+	std::vector<size_t> match_pos_fwd;
+	std::vector<size_t> match_pos_bwd;
+	svs(parsing_fwd, index, match_pos_fwd, fwd_parse_start);
+	svs(parsing_bwd, index, match_pos_bwd, bwd_parse_start);
+	std::cout << "svs fwd output - " << std::endl;
+	for(int i = 0; i < match_pos_fwd.size(); ++i)
+		std::cout << match_pos_fwd[i] << " ";
+	std::cout << std::endl;
+	std::cout << "svs bwd output - " << std::endl;
+	for(int i = 0; i < match_pos_bwd.size(); ++i)
+		std::cout << match_pos_bwd[i] << " ";
+	std::cout << std::endl;
+	size_t fwd_parse_len = 0;
+	for(int i = 0; i < parsing_fwd.size(); ++i)
+		fwd_parse_len += std::get<0>(parsing_fwd[i]).length();
+	if(fwd_parse_start + fwd_parse_len - 1 < bwd_parse_start)
+	{
+		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << std::endl;
+		return -1;
+	}
+	std::vector<size_t> found;
+	int match_offset = 0;
+	int d = bwd_parse_start - fwd_parse_start;
+	std::vector<size_t>& other = match_pos_bwd;
+	if(match_pos_fwd.size() < match_pos_bwd.size())
+		match_pos = match_pos_fwd;
+	else
+	{
+		match_pos = match_pos_bwd;
+		other = match_pos_fwd;
+		d = fwd_parse_start - bwd_parse_start;
+		match_offset = d;
+	}
+	for(int i = 0; i < match_pos.size(); ++i)
+	{
+		size_t key = match_pos[i] + d; 
+		auto it = std::lower_bound(other.begin(), other.end(), key);
+		if(*it == key )
+			found.push_back(match_pos[i] + match_offset);
+	}
+	std::move(found.begin(), found.end(), match_pos.begin());
+	match_pos.resize(found.size());
+	std::cout << "fb-svs output -  " << std::endl;
+	for(int i = 0; i < match_pos.size(); ++i)
+		std::cout << match_pos[i] << " ";
+	std::cout << std::endl;
+	return match_pos.size();
+}
