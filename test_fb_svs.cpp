@@ -5,6 +5,7 @@
 #include<random>
 #include<unordered_map>
 #include<tuple>
+#include<omp.h>
 #include"utils.h"
 
 int main()
@@ -27,6 +28,7 @@ int main()
 	size_t min_query_len = 1;
 	size_t n_queries = 1000;
 	std::uniform_int_distribution<int> query_len_dist(min_query_len, max_query_len);
+	#pragma omp parallel for
 	for(int i = 0; i < n_queries; ++i)
 	{
 		size_t query_len = query_len_dist(generator);
