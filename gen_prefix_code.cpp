@@ -35,9 +35,10 @@ void Node::extend()
 }
 
 std::default_random_engine Node::generator;
-std::vector<char> Node::alphabet = std::vector<char>{'A', 'C', 'G', 'T', 'N'};
+std::vector<char> Node::alphabet = std::vector<char>{'A', 'C', 'G', 'T'};
+//std::vector<char> Node::alphabet = std::vector<char>{'A', 'C', 'G', 'T', 'N'};
 //std::vector<char> Node::alphabet = std::vector<char>{'U', 'T', 'A', 'W', 'C', 'Y', 'M', 'H', 'G', 'K', 'R', 'D', 'S', 'B', 'V', 'N'};
-std::discrete_distribution<int> Node::distribution = std::discrete_distribution<int>{0.55, 0.45};
+std::discrete_distribution<int> Node::distribution = std::discrete_distribution<int>{0.35, 0.65};
 
 void grow_tree(Node* node, size_t depth, size_t max_depth)
 {
@@ -94,7 +95,7 @@ int main()
 	std::vector<std::string> codebook;
 	gen_prefix_code(max_depth, codebook);
 	std::cout << "codebook size = " << codebook.size() << std::endl;
-	std::ofstream ofs("codebook_dna_1.txt");
+	std::ofstream ofs("codebook_dna_3.txt");
 	for(int i =0; i < codebook.size(); ++i)
 		ofs << codebook[i] << std::endl;
 //        for(int i =0; i < codewords.size(); ++i)
