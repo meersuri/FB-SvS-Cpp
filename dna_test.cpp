@@ -13,6 +13,8 @@ int main()
 	while(ifs.getline(buffer, 100))
 		codebook.push_back(std::string(buffer));
 
+	auto max_code_it = std::max_element(codebook.begin(), codebook.end(), [] (std::string x1, std::string x2){ return x1.size() > x2.size();});
+	size_t max_code_len = max_code_it->size();
 	ifs = std::ifstream("/mnt/d/ecoli.fasta");
 	std::string ref_seq;
 	while(ifs.getline(buffer, 100))
@@ -45,7 +47,7 @@ int main()
 		if((i % 100) == 0)
 			std::cout << "testing query " << i + 1 << " " << query << std::endl;
 		std::vector<size_t> fb_svs_match_pos;
-		int n_matches = fb_svs(query, index, fb_svs_match_pos);
+		int n_matches = fb_svs(query, index, max_code_len, fb_svs_match_pos);
 		std::vector<size_t> str_find_match_pos;
 		size_t start = 0;
 		while(1)

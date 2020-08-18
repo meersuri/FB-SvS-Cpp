@@ -24,7 +24,9 @@ int main()
 	std::cout<<std::endl;
 	std::unordered_map<std::string, std::vector<size_t>> index;
 	std::vector<std::string> code;
-	gen_k_grams_code(3, alphabet, code);
+	gen_k_grams_code(k, alphabet, code);
+	auto max_code_it = std::max_element(code.begin(), code.end(), [] (std::string x1, std::string x2){ return x1.size() > x2.size();});
+	size_t max_code_len = max_code_it->size();
 	build_index(ref_seq, code, index);
 
 	size_t query_len = 7;
@@ -35,7 +37,7 @@ int main()
 	std::cout << "query sequence -" << std::endl;
 	std::cout << query << std::endl;
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing;
-	size_t fwd_parse_start = parse_query_fwd(query, index, parsing);
+	size_t fwd_parse_start = parse_query_fwd(query, index, max_code_len, parsing);
 	std::cout << "query forward parse - (code word, posting list length, index)" << std::endl;
 	for(int i = 0; i < parsing.size(); ++i)
 		std::cout << std::get<0>(parsing[i]) << " " << std::get<1>(parsing[i]) << " " << std::get<2>(parsing[i]) << std::endl;

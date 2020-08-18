@@ -22,6 +22,8 @@ int main()
 	std::unordered_map<std::string, std::vector<size_t>> index;
 	std::vector<std::string> code;
 	gen_k_grams_code(k, alphabet, code);
+	auto max_code_it = std::max_element(code.begin(), code.end(), [] (std::string x1, std::string x2){ return x1.size() > x2.size();});
+	size_t max_code_len = max_code_it->size();
 	build_index(ref_seq, code, index);
 
 	size_t max_query_len = 100;
@@ -38,7 +40,7 @@ int main()
 		if((i % 100) == 0)
 			std::cout << "testing query " << i + 1 << " " << query << std::endl;
 		std::vector<size_t> fb_svs_match_pos;
-		int n_matches = fb_svs(query, index, fb_svs_match_pos);
+		int n_matches = fb_svs(query, index, max_code_len, fb_svs_match_pos);
 		std::vector<size_t> str_find_match_pos;
 		size_t start = 0;
 		while(1)

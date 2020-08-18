@@ -47,7 +47,7 @@ void build_index(std::string& ref_seq, std::vector<std::string>& code, std::unor
 	}
 }
 
-size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
+size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, size_t max_code_len, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
 	size_t start = query.size();
 	int i = 0;
@@ -56,6 +56,8 @@ size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string,
 		int j = i;
 		while(j < query.size())
 		{
+			if((j - i + 1) > max_code_len)
+				break;
 			std::string substr = query.substr(i, j - i + 1);
 			auto it = index.find(substr);
 			if(it != index.end())
@@ -68,14 +70,14 @@ size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string,
 			}
 			++j;
 		}
-		if(j == query.size())
+		if((j - i + 1) > max_code_len || j == query.size())
 			break;
 	}
-	sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
-size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
+size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::vector<size_t>>& index, size_t max_code_len, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
 	size_t start = query.size();
 	int i = query.size() - 1;
@@ -84,6 +86,8 @@ size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::v
 		int j = i;
 		while(j >= 0)
 		{
+			if((i - j + 1) > max_code_len)
+				break;
 			std::string substr = query.substr(j, i - j + 1);
 			auto it = index.find(substr);
 			if(it != index.end())
@@ -96,10 +100,10 @@ size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::v
 			}
 			--j;
 		}
-		if(j == -1)
+		if((i - j + 1) > max_code_len || j == -1)
 			break;
 	}
-	sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
@@ -128,21 +132,21 @@ void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::uno
 		match_pos[i] -= std::get<2>(parsing[0]) - start;
 }
 
-int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<size_t>& match_pos) 
+int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, size_t max_code_len, std::vector<size_t>& match_pos) 
 {
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_fwd;
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_bwd;
-	size_t fwd_parse_start = parse_query_fwd(query, index, parsing_fwd);
+	size_t fwd_parse_start = parse_query_fwd(query, index, max_code_len, parsing_fwd);
 	//std::cout << "query forward parse - (code word, posting list length, index)" << std::endl;
 	//for(int i = 0; i < parsing_fwd.size(); ++i)
 	//	std::cout << std::get<0>(parsing_fwd[i]) << " " << std::get<1>(parsing_fwd[i]) << " " << std::get<2>(parsing_fwd[i]) << std::endl;
-	size_t bwd_parse_start = parse_query_bwd(query, index, parsing_bwd);
+	size_t bwd_parse_start = parse_query_bwd(query, index, max_code_len, parsing_bwd);
 	//std::cout << "query backward parse - (code word, posting list length, index)" << std::endl;
 	//for(int i = 0; i < parsing_bwd.size(); ++i)
 	//	std::cout << std::get<0>(parsing_bwd[i]) << " " << std::get<1>(parsing_bwd[i]) << " " << std::get<2>(parsing_bwd[i]) << std::endl;
 	if(parsing_fwd.size() == 0 || parsing_bwd.size() == 0)
 	{
-		std::cout << "fb-svs failed due to one or more empty parsings" << std::endl;
+//		std::cout << "fb-svs failed due to one or more empty parsings" << std::endl;
 		return -1;
 	}
 	std::vector<size_t> match_pos_fwd;
@@ -162,7 +166,7 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_
 		fwd_parse_len += std::get<0>(parsing_fwd[i]).length();
 	if(fwd_parse_start + fwd_parse_len - 1 < bwd_parse_start)
 	{
-		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << std::endl;
+//		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << std::endl;
 		return -1;
 	}
 	std::vector<size_t> found;
@@ -187,9 +191,5 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_
 	}
 	std::move(found.begin(), found.end(), match_pos.begin());
 	match_pos.resize(found.size());
-	//std::cout << "fb-svs output -  " << std::endl;
-	//for(int i = 0; i < match_pos.size(); ++i)
-	//	std::cout << match_pos[i] << " ";
-	//std::cout << std::endl;
 	return match_pos.size();
 }
