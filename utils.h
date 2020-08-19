@@ -30,12 +30,15 @@ void build_index(std::string& ref_seq, std::vector<std::string>& code, std::unor
 {
 	for(int i = 0; i < code.size(); ++i)
 		index[code[i]] = std::vector<size_t>();
+	std::string key;
 	for(int i = 0; i < ref_seq.size(); ++i)
 	{
 		int j = i;
+		key = "";
 		while(j < ref_seq.size()) 
 		{
-			std::string key = ref_seq.substr(i, j - i + 1);
+			key.push_back(ref_seq[j]);
+//			std::string key = ref_seq.substr(i, j - i + 1);
 			auto it = index.find(key);
 			if(it != index.end())
 			{
@@ -51,14 +54,17 @@ size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string,
 {
 	size_t start = query.size();
 	int i = 0;
+	std::string substr;
 	while(i < query.size())
 	{
 		int j = i;
+		substr = "";
 		while(j < query.size())
 		{
 			if((j - i + 1) > max_code_len)
 				break;
-			std::string substr = query.substr(i, j - i + 1);
+			substr.push_back(query[j]);
+//			std::string substr = query.substr(i, j - i + 1);
 			auto it = index.find(substr);
 			if(it != index.end())
 			{
@@ -81,14 +87,17 @@ size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::v
 {
 	size_t start = query.size();
 	int i = query.size() - 1;
+	std::string substr;
 	while(i >= 0)
 	{
 		int j = i;
+		substr = "";
 		while(j >= 0)
 		{
 			if((i - j + 1) > max_code_len)
 				break;
-			std::string substr = query.substr(j, i - j + 1);
+			substr.push_back(query[j]);
+//			std::string substr = query.substr(j, i - j + 1);
 			auto it = index.find(substr);
 			if(it != index.end())
 			{
