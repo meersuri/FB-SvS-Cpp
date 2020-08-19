@@ -256,7 +256,7 @@ void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::uno
 	}
 	std::unordered_set<size_t> match_pos_final;
 	for(auto it = match_pos.begin(); it != match_pos.end(); ++it)
-		match_pos_final.insert(*it - std::get<2>(parsing[0]) - start);
+		match_pos_final.insert(*it - (std::get<2>(parsing[0]) - start));
 	match_pos = match_pos_final;
 }
 
