@@ -96,7 +96,8 @@ size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::v
 		{
 			if((i - j + 1) > max_code_len)
 				break;
-			substr.push_back(query[j]);
+			substr.insert(substr.cbegin(), query[j]);
+//			substr.push_back(query[j]);
 //			std::string substr = query.substr(j, i - j + 1);
 			auto it = index.find(substr);
 			if(it != index.end())
@@ -146,13 +147,13 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_fwd;
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_bwd;
 	size_t fwd_parse_start = parse_query_fwd(query, index, max_code_len, parsing_fwd);
-	//std::cout << "query forward parse - (code word, posting list length, index)" << std::endl;
-	//for(int i = 0; i < parsing_fwd.size(); ++i)
-	//	std::cout << std::get<0>(parsing_fwd[i]) << " " << std::get<1>(parsing_fwd[i]) << " " << std::get<2>(parsing_fwd[i]) << std::endl;
+//	std::cout << "query forward parse - (code word, posting list length, index)" << std::endl;
+//	for(int i = 0; i < parsing_fwd.size(); ++i)
+//		std::cout << std::get<0>(parsing_fwd[i]) << " " << std::get<1>(parsing_fwd[i]) << " " << std::get<2>(parsing_fwd[i]) << std::endl;
 	size_t bwd_parse_start = parse_query_bwd(query, index, max_code_len, parsing_bwd);
-	//std::cout << "query backward parse - (code word, posting list length, index)" << std::endl;
-	//for(int i = 0; i < parsing_bwd.size(); ++i)
-	//	std::cout << std::get<0>(parsing_bwd[i]) << " " << std::get<1>(parsing_bwd[i]) << " " << std::get<2>(parsing_bwd[i]) << std::endl;
+//	std::cout << "query backward parse - (code word, posting list length, index)" << std::endl;
+//	for(int i = 0; i < parsing_bwd.size(); ++i)
+//		std::cout << std::get<0>(parsing_bwd[i]) << " " << std::get<1>(parsing_bwd[i]) << " " << std::get<2>(parsing_bwd[i]) << std::endl;
 	if(parsing_fwd.size() == 0 || parsing_bwd.size() == 0)
 	{
 //		std::cout << "fb-svs failed due to one or more empty parsings" << std::endl;
