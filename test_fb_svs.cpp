@@ -22,13 +22,14 @@ int main()
 	std::unordered_map<std::string, std::vector<size_t>> index;
 	std::vector<std::string> code;
 	gen_k_grams_code(k, alphabet, code);
-	auto max_code_it = std::max_element(code.begin(), code.end(), [] (std::string x1, std::string x2){ return x1.size() > x2.size();});
+	auto max_code_it = std::max_element(code.begin(), code.end(), [] (std::string x1, std::string x2){ return x1.size() < x2.size();});
 	size_t max_code_len = max_code_it->size();
+	std::cout << "max code len = " << max_code_len << std::endl;
 	build_index(ref_seq, code, index);
 
-	size_t max_query_len = 100;
-	size_t min_query_len = 1;
-	size_t n_queries = 1000;
+	size_t max_query_len = 2000;
+	size_t min_query_len = 1000;
+	size_t n_queries = 2000;
 	std::uniform_int_distribution<int> query_len_dist(min_query_len, max_query_len);
 	#pragma omp parallel for
 	for(int i = 0; i < n_queries; ++i)
@@ -38,7 +39,7 @@ int main()
 		for(int j = 0; j < query_len; ++j)
 			query[j] = alphabet[source_dist(generator)];
 		if((i % 100) == 0)
-			std::cout << "testing query " << i + 1 << " " << query << std::endl;
+			std::cout << "testing query " << i + 1 << std::endl;
 		std::vector<size_t> fb_svs_match_pos;
 		int n_matches = fb_svs(query, index, max_code_len, fb_svs_match_pos);
 		std::vector<size_t> str_find_match_pos;

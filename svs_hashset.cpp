@@ -25,7 +25,7 @@ int main()
 	std::unordered_map<std::string, std::unordered_set<size_t>> index;
 	std::vector<std::string> code;
 	gen_k_grams_code(k, alphabet, code);
-	auto max_code_it = std::max_element(code.begin(), code.end(), [] (std::string x1, std::string x2){ return x1.size() > x2.size();});
+	auto max_code_it = std::max_element(code.begin(), code.end(), [] (std::string x1, std::string x2){ return x1.size() < x2.size();});
 	size_t max_code_len = max_code_it->size();
 	build_index(ref_seq, code, index);
 

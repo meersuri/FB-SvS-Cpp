@@ -12,7 +12,7 @@ int main()
 	char buffer[100];
 	while(ifs.getline(buffer, 100))
 		codebook.push_back(std::string(buffer));
-	auto max_code_it = std::max_element(codebook.begin(), codebook.end(), [] (std::string x1, std::string x2){ return x1.size() > x2.size();});
+	auto max_code_it = std::max_element(codebook.begin(), codebook.end(), [] (std::string x1, std::string x2){ return x1.size() < x2.size();});
 	size_t max_code_len = max_code_it->size();
 
 	ifs = std::ifstream("/mnt/d/ecoli.fasta");
@@ -34,7 +34,7 @@ int main()
 //	std::string query = ref_seq.substr(3141, query_len);
 	size_t max_query_len = 2000;
 	size_t min_query_len = 1000;
-	size_t n_queries = 5000;
+	size_t n_queries = 1000;
 	std::uniform_int_distribution<int> query_len_dist(min_query_len, max_query_len);
 	std::vector<std::string> failed_tests;
 	#pragma omp parallel for
