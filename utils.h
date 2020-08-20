@@ -213,9 +213,9 @@ void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::uno
 	if(parsing.size() == 0)
 		return;
 	match_pos = index.at(std::get<0>(parsing[0]));
+	std::vector<size_t> found;
 	for(int i = 1; i < parsing.size(); ++i)
 	{
-		std::vector<size_t> found;
 		int d = std::get<2>(parsing[i]) - std::get<2>(parsing[0]);
 		for(int j = 0; j < match_pos.size(); ++j)
 		{
@@ -228,6 +228,7 @@ void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::uno
 		size_t n = found.size();
 		std::move(found.begin(), found.end(), match_pos.begin());
 		match_pos.resize(n);
+		found.clear();
 	}
 	for(int i = 0; i < match_pos.size(); ++i)
 		match_pos[i] -= std::get<2>(parsing[0]) - start;
@@ -295,7 +296,7 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_
 		fwd_parse_len += std::get<0>(parsing_fwd[i]).length();
 	if(fwd_parse_start + fwd_parse_len - 1 < bwd_parse_start)
 	{
-//		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << std::endl;
+		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << std::endl;
 		return -1;
 	}
 	std::vector<size_t> found;
