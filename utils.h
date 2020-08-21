@@ -389,3 +389,23 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::unordered_se
 	match_pos = match_pos_final;
 	return match_pos.size();
 }
+
+void load_index(std::string file, std::unordered_map<std::string, std::vector<size_t>>& index)
+{
+	std::ifstream ifs(file);
+	std::string buffer;
+	size_t list_size = 0;
+	size_t list_val = 0;
+	while(ifs)
+	{
+		ifs >> buffer;
+		index.insert(std::make_pair(buffer, std::vector<size_t>()));
+		ifs >> list_size;
+		for(int i = 0; i < list_size; ++i)
+		{
+			ifs >> list_val;
+	       		index.at(buffer).push_back(list_val);	
+		}
+	}
+	return;
+}
