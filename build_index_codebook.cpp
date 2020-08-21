@@ -11,7 +11,7 @@ int main()
 {
 	std::vector<char> alphabet = {'A', 'T', 'C', 'G'}; 
 	size_t alphabet_size = alphabet.size();
-	std::ifstream ifs("codebook_dna_3.txt");
+	std::ifstream ifs("k_grams_dna_8.txt");
 	std::vector<std::string> codebook;
 	char buffer[100];
 	while(ifs.getline(buffer, 100))
@@ -29,7 +29,7 @@ int main()
 	std::cout << "reference sequence length = " << ref_seq.size() << std::endl;
 	std::unordered_map<std::string, std::vector<size_t>> index;
 	build_index(ref_seq, codebook, index);
-	std::ofstream ofs("ecoli_codebook_3_index.txt");
+	std::ofstream ofs("ecoli_k_grams_dna_8_index.txt");
 	ofs << "index v1" << std::endl;
 	for(auto it = index.begin(); it != index.end(); ++it)
 	{
@@ -37,7 +37,8 @@ int main()
 		size_t posting_list_len = it->second.size();
 		ofs << std::to_string(posting_list_len) << std::endl;
 		for(int i = 0; i < posting_list_len; ++i)
-			ofs << std::to_string(it->second[i]) << std::endl;
+			ofs << std::to_string(it->second[i]) << " ";
+		ofs << std::endl;
 	}
 	ofs.close();
 	return 0;
