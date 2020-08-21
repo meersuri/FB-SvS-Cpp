@@ -7,46 +7,26 @@
 
 int main()
 {
-	std::ifstream ifs("k_grams_dna_8.txt");
+	std::string ref_seq;
 	std::vector<std::string> codebook;
-	char buffer[100];
-	while(ifs.getline(buffer, 100))
-		codebook.push_back(std::string(buffer));
+	std::vector<std::string> queries;
+	std::unordered_map<std::string, std::vector<size_t>> index;
+	load_codebook("k_grams_dna_8.txt", codebook);
+	std::cout <<"finished loading codebook" << std::endl;
 	auto max_code_it = std::max_element(codebook.begin(), codebook.end(), [] (std::string x1, std::string x2){ return x1.size() < x2.size();});
 	size_t max_code_len = max_code_it->size();
-
-	ifs = std::ifstream("/mnt/d/ecoli.fasta");
-	std::string ref_seq;
-	while(ifs.getline(buffer, 100))
-	{
-		if(buffer[0] != '>')
-			ref_seq += std::string(buffer);
-	}
+	load_ref_seq("/mnt/d/ecoli.fasta", ref_seq);
 	std::cout << "reference sequence length = " << ref_seq.size() << std::endl;
-	std::unordered_map<std::string, std::vector<size_t>> index;
-	build_index(ref_seq, codebook, index);
-	std::cout <<"finished building index" << std::endl;
-	ifs = std::ifstream("./ecoli_reads_R1.fastq");
-	char line[500];
-	std::vector<std::string> queries;
-	bool start_seq = false;
-	while(ifs.getline(line, 500))
-	{
-		if(start_seq)
-		{
-			queries.push_back(std::string(line));
-			start_seq = false;
-		}
-		if(line[0] == '@')
-			start_seq = true;
-
-	}
+	load_index("ecoli_k_grams_dna_8_index.txt", index);
+	std::cout <<"finished loading index" << std::endl;
+	load_queries("./ecoli_reads.fastq", queries);
+	std::cout <<"finished loading queries" << std::endl;
 	size_t n_queries = queries.size();
 	#pragma omp parallel for
 	for(int i = 0; i < n_queries; ++i)
 	{
 		std::string query = queries[i];
-		if((i % 5000) == 0)
+		if((i % 10000) == 0)
 			std::cout << "testing query " << i + 1 << std::endl;
 		std::vector<size_t> str_find_match_pos;
 		size_t start = 0;

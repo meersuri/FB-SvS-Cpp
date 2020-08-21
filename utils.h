@@ -409,3 +409,40 @@ void load_index(std::string file, std::unordered_map<std::string, std::vector<si
 	}
 	return;
 }
+
+void load_queries(std::string file, std::vector<std::string>& queries)
+{
+	std::ifstream ifs(file);
+	char line[500];
+	bool start_seq = false;
+	while(ifs.getline(line, 500))
+	{
+		if(start_seq)
+		{
+			queries.push_back(std::string(line));
+			start_seq = false;
+		}
+		if(line[0] == '@')
+			start_seq = true;
+
+	}
+}
+
+void load_codebook(std::string file, std::vector<std::string>& codebook)
+{
+	std::ifstream ifs(file);
+	char buffer[100];
+	while(ifs.getline(buffer, 100))
+		codebook.push_back(std::string(buffer));
+}
+
+void load_ref_seq(std::string file, std::string& ref_seq)
+{
+	std::ifstream ifs(file);
+	char buffer[100];
+	while(ifs.getline(buffer, 100))
+	{
+		if(buffer[0] != '>')
+			ref_seq += std::string(buffer);
+	}
+}
