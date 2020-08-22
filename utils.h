@@ -428,12 +428,23 @@ void load_queries(std::string file, std::vector<std::string>& queries)
 	}
 }
 
-void load_codebook(std::string file, std::vector<std::string>& codebook)
+void load_codebook(std::string file, std::vector<std::string>& codebook, std::vector<char>& alphabet)
 {
 	std::ifstream ifs(file);
-	char buffer[100];
-	while(ifs.getline(buffer, 100))
-		codebook.push_back(std::string(buffer));
+	size_t alphabet_size;
+	char symbol;
+	ifs >> alphabet_size;
+	for(int i = 0; i < alphabet_size; ++i)
+	{
+		ifs >> symbol;
+		alphabet.push_back(symbol);
+	}
+	std::string codeword;
+	while(ifs)
+	{
+		ifs >> codeword;
+		codebook.push_back(codeword);
+	}
 }
 
 void load_ref_seq(std::string file, std::string& ref_seq)
@@ -445,4 +456,78 @@ void load_ref_seq(std::string file, std::string& ref_seq)
 		if(buffer[0] != '>')
 			ref_seq += std::string(buffer);
 	}
+}
+
+void write_index(std::string file, std::unordered_map<std::string, std::vector<size_t>>& index)
+{
+	std::ofstream ofs(file);
+	for(auto it = index.begin(); it != index.end(); ++it)
+	{
+		ofs << it->first << std::endl;
+		size_t posting_list_len = it->second.size();
+		ofs << std::to_string(posting_list_len) << std::endl;
+		for(int i = 0; i < posting_list_len; ++i)
+			ofs << std::to_string(it->second[i]) << " ";
+		ofs << std::endl;
+	}
+}
+
+void grow_tree(Node* node, size_t depth, size_t max_depth)
+{
+	//std::cout << node->val << " " << depth << std::endl;
+	if(node == nullptr)
+		return;
+	if(depth == max_depth)
+		return;
+	node->extend();
+	for(int i = 0; i < node->children.size(); ++i)
+	{
+		if(node->children[i] != nullptr)
+			grow_tree(node->children[i], depth + 1, max_depth);
+	}
+	return;
+}	
+
+void traverse_tree(Node* node, std::string& code, std::vector<std::string>& codewords)
+{
+	if(node == nullptr)
+		return;
+	code.push_back(node->val);
+	bool is_leaf = true;
+	for(int i = 0; i < node->children.size(); ++i)
+	{
+		if(node->children[i] != nullptr)
+		{
+			is_leaf = false;
+			traverse_tree(node->children[i], code, codewords);
+		}
+	}
+	if(is_leaf)
+		codewords.push_back(code.substr(1, code.size() - 1));
+	code.pop_back();
+	return;
+}
+
+void gen_prefix_code(size_t max_code_len, std::vector<std::string>& codebook)
+{
+	Node* root = new Node('X');
+	for(int i =0; i < root->alphabet.size(); ++i)
+	{
+		root->children[i] = new Node(root->alphabet[i]);
+		grow_tree(root->children[i], 0, max_code_len);
+	}
+	std::string code;
+	traverse_tree(root, code, codebook);
+	return;
+}
+
+void write_codebook(std::string file, std::vector<std::string>& codebook, std::vector<char>& alphabet)
+{
+	std::ofstream ofs(file);
+	ofs << alphabet.size() << std::endl;
+	for(int i = 0; i < alphabet.size(); ++i)
+		ofs << alphabet[i] << " ";
+	ofs << std::endl;
+	for(int i =0; i < codebook.size(); ++i)
+		ofs << codebook[i] << std::endl;
 }
