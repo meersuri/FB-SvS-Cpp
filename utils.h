@@ -521,7 +521,7 @@ void load_queries(std::string file, std::vector<std::string>& queries)
 			queries.push_back(std::string(line));
 			start_seq = false;
 		}
-		if(line[0] == '@')
+		if(line[0] == '@' && line[1] == 'U')
 			start_seq = true;
 
 	}
