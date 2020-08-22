@@ -496,9 +496,8 @@ void load_index(std::string file, std::unordered_map<std::string, std::vector<si
 	std::string buffer;
 	size_t list_size = 0;
 	size_t list_val = 0;
-	while(ifs)
+	while(ifs >> buffer)
 	{
-		ifs >> buffer;
 		index.insert(std::make_pair(buffer, std::vector<size_t>()));
 		ifs >> list_size;
 		for(int i = 0; i < list_size; ++i)
@@ -540,11 +539,8 @@ void load_codebook(std::string file, std::vector<std::string>& codebook, std::ve
 		alphabet.push_back(symbol);
 	}
 	std::string codeword;
-	while(ifs)
-	{
-		ifs >> codeword;
+	while(ifs >> codeword)
 		codebook.push_back(codeword);
-	}
 }
 
 void load_ref_seq(std::string file, std::string& ref_seq)
