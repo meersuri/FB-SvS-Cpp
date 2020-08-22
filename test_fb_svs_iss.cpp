@@ -5,52 +5,46 @@
 #include<omp.h>
 #include"utils.h"
 
-int main()
+int main(int argc, char** argv)
 {
-	std::ifstream ifs("k_grams_dna_7.txt");
+	if(argc < 5)
+	{
+		std::cerr << "usage - " << argv[0] << "  " << "path to codebook" <<  "  " <<
+		       	"path to ref seq"<< "  " << "path to index" << 
+		       "  " << 	"path to queries" << std::endl; 
+		return -1;
+	}
+	std::string codebook_file = argv[1];
+	std::string ref_seq_file = argv[2];
+	std::string index_file = argv[3];
+	std::string queries_file = argv[4];
+	
+	std::vector<char> alphabet; 
+	std::string ref_seq;
 	std::vector<std::string> codebook;
-	char buffer[100];
-	while(ifs.getline(buffer, 100))
-		codebook.push_back(std::string(buffer));
+	std::unordered_map<std::string, std::vector<size_t>> index;
+	std::vector<std::string> queries;
+
+	load_codebook(codebook_file, codebook, alphabet);
+	std::cout <<"finished loading codebook" << std::endl;
 	auto max_code_it = std::max_element(codebook.begin(), codebook.end(), [] (std::string x1, std::string x2){ return x1.size() < x2.size();});
 	size_t max_code_len = max_code_it->size();
-
-	ifs = std::ifstream("/mnt/d/ecoli.fasta");
-	std::string ref_seq;
-	while(ifs.getline(buffer, 100))
-	{
-		if(buffer[0] != '>')
-			ref_seq += std::string(buffer);
-	}
-	std::cout << "reference sequence length = " << ref_seq.size() << std::endl;
-	std::unordered_map<std::string, std::vector<size_t>> index;
-	build_index(ref_seq, codebook, index);
-	std::cout <<"finished building index" << std::endl;
-	ifs = std::ifstream("./ecoli_reads_R1.fastq");
-	char line[500];
-	std::vector<std::string> queries;
-	bool start_seq = false;
-	while(ifs.getline(line, 500))
-	{
-		if(start_seq)
-		{
-			queries.push_back(std::string(line));
-			start_seq = false;
-		}
-		if(line[0] == '@')
-			start_seq = true;
-
-	}
+	load_ref_seq(ref_seq_file, ref_seq);
+	std::cout <<"finished loading ref sequence" << std::endl;
+	load_index(index_file, index);
+	std::cout <<"finished loading index" << std::endl;
+	load_queries(queries_file, queries);
+	std::cout <<"finished loading queries" << std::endl;
 	size_t n_queries = queries.size();
 	std::vector<std::pair<std::string, size_t>> failed_tests;
-//	#pragma omp parallel for
+	#pragma omp parallel for
 	for(int i = 0; i < n_queries; ++i)
 	{
 		std::string query = queries[i];
-		if((i % 100) == 0)
+		if((i % 10000) == 0)
 			std::cout << "testing query " << i + 1 << std::endl;
 		std::vector<size_t> fb_svs_match_pos;
-		int n_matches = fb_svs(query, index, max_code_len, fb_svs_match_pos);
+		int n_matches = fb_svs_k_grams(query, index, max_code_len, fb_svs_match_pos);
 		std::vector<size_t> str_find_match_pos;
 		size_t start = 0;
 		while(1)

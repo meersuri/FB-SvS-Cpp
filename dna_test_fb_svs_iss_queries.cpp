@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 		if((i % 10000) == 0)
 			std::cout << "testing query " << i + 1 << std::endl;
 		std::vector<size_t> fb_svs_match_pos;
-		int n_matches = fb_svs(query, index, max_code_len, fb_svs_match_pos);
+		int n_matches = fb_svs_k_grams(query, index, max_code_len, fb_svs_match_pos);
 	}
 	return 0;
 }
