@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 		for(int j = 0; j < query_len; ++j)
 			query[j] = alphabet[source_dist(generator)];
 		if((i % (int)(n_queries/10)) == 0)
-			std::cout << "testing query " << i + 1 << " " << query << std::endl;
+			std::cout << "testing query " << i + 1 << std::endl;
 		std::vector<size_t> fb_svs_match_pos;
 		int n_matches = fb_svs(query, index, max_code_len, fb_svs_match_pos);
 		std::vector<size_t> str_find_match_pos;
