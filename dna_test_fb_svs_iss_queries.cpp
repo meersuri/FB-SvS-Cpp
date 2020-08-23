@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 	for(int i = 0; i < n_queries; ++i)
 	{
 		std::string query = queries[i];
-		if((i % 10000) == 0)
+		if((i % (int)(n_queries/10)) == 0)
 			std::cout << "testing query " << i + 1 << std::endl;
 		std::vector<size_t> fb_svs_match_pos;
 		int n_matches = fb_svs_k_grams(query, index, max_code_len, fb_svs_match_pos);
