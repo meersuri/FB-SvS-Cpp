@@ -6,10 +6,12 @@
 #include<unordered_map>
 #include<tuple>
 #include<omp.h>
+#include<chrono>
 #include"utils.h"
 
 int main(int argc, char** argv)
 {
+	using namespace std::chrono;
 	if(argc < 7)
 	{
 		std::cerr << "usage - " << argv[0] << "  " << "kmer size" <<  "  " <<
@@ -44,6 +46,7 @@ int main(int argc, char** argv)
 	std::cout <<"finished building index" << std::endl;
 	std::uniform_int_distribution<int> query_len_dist(min_query_len, max_query_len);
 	std::vector<std::pair<std::string, size_t>> failed_tests;
+	steady_clock::time_point tp1 = steady_clock::now();
 	#pragma omp parallel for
 	for(int i = 0; i < n_queries; ++i)
 	{
@@ -56,5 +59,8 @@ int main(int argc, char** argv)
 		std::vector<size_t> fb_svs_match_pos;
 		int n_matches = fb_svs_k_grams(query, index, max_code_len, fb_svs_match_pos);
 	}
+	steady_clock::time_point tp2 = steady_clock::now();
+	milliseconds delta = duration_cast<milliseconds>(tp2 - tp1);
+	std::cout << "query time = " << delta.count() << " ms" << std::endl;
 	return 0;
 }

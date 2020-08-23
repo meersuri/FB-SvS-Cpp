@@ -3,10 +3,12 @@
 #include<fstream>
 #include<random>
 #include<omp.h>
+#include<chrono>
 #include"utils.h"
 
 int main(int argc, char** argv)
 {
+	using namespace std::chrono;
 	if(argc < 4)
 	{
 		std::cerr << "usage - " << argv[0] << "  " << "path to codebook" <<  "  " << "path to index" << 
@@ -31,6 +33,7 @@ int main(int argc, char** argv)
 	load_queries(queries_file, queries);
 	std::cout <<"finished loading queries" << std::endl;
 	size_t n_queries = queries.size();
+	steady_clock::time_point tp1 = steady_clock::now();
 	#pragma omp parallel for
 	for(int i = 0; i < n_queries; ++i)
 	{
@@ -40,6 +43,9 @@ int main(int argc, char** argv)
 		std::vector<size_t> fb_svs_match_pos;
 		int n_matches = fb_svs_k_grams(query, index, max_code_len, fb_svs_match_pos);
 	}
+	steady_clock::time_point tp2 = steady_clock::now();
+	milliseconds delta = duration_cast<milliseconds>(tp2 - tp1);
+	std::cout << "query time = " << delta.count() << " ms" << std::endl;
 	return 0;
 }
 
