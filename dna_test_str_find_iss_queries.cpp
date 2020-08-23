@@ -5,21 +5,30 @@
 #include<omp.h>
 #include"utils.h"
 
-int main()
+int main(int argc, char** argv)
 {
-	std::string ref_seq;
+	if(argc < 4)
+	{
+		std::cerr << "usage - " << argv[0] << "  " << "path to codebook" <<  "  " << "path to index" << 
+		       "  " << 	"path to queries" << std::endl; 
+		return -1;
+	}
+	std::string codebook_file = argv[1];
+	std::string index_file = argv[2];
+	std::string queries_file = argv[3];
+	
+	std::vector<char> alphabet; 
 	std::vector<std::string> codebook;
-	std::vector<std::string> queries;
 	std::unordered_map<std::string, std::vector<size_t>> index;
-	load_codebook("k_grams_dna_8.txt", codebook);
+	std::vector<std::string> queries;
+
+	load_codebook(codebook_file, codebook, alphabet);
 	std::cout <<"finished loading codebook" << std::endl;
 	auto max_code_it = std::max_element(codebook.begin(), codebook.end(), [] (std::string x1, std::string x2){ return x1.size() < x2.size();});
 	size_t max_code_len = max_code_it->size();
-	load_ref_seq("/mnt/d/ecoli.fasta", ref_seq);
-	std::cout << "reference sequence length = " << ref_seq.size() << std::endl;
-	load_index("ecoli_k_grams_dna_8_index.txt", index);
+	load_index(index_file, index);
 	std::cout <<"finished loading index" << std::endl;
-	load_queries("./ecoli_reads.fastq", queries);
+	load_queries(queries_file, queries);
 	std::cout <<"finished loading queries" << std::endl;
 	size_t n_queries = queries.size();
 	#pragma omp parallel for
