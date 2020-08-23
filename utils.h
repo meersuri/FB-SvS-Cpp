@@ -89,7 +89,7 @@ size_t parse_query_fwd_k_grams(const std::string& query, std::unordered_map<std:
 		substr = query.substr(i, k);
 		parsing.push_back(std::make_tuple(substr, index[substr].size(), i));
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (const std::tuple<std::string, size_t, size_t>& x1, const std::tuple<std::string, size_t, size_t>& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
@@ -121,7 +121,7 @@ size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string,
 		if((j - i + 1) > max_code_len || j == query.size())
 			break;
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (const std::tuple<std::string, size_t, size_t>& x1, const std::tuple<std::string, size_t, size_t>& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
@@ -153,7 +153,7 @@ size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string,
 		if((j - i + 1) > max_code_len || j == query.size())
 			break;
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (const std::tuple<std::string, size_t, size_t>& x1, const std::tuple<std::string, size_t, size_t>& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
@@ -173,7 +173,7 @@ size_t parse_query_bwd_k_grams(std::string query, std::unordered_map<std::string
 		parsing.push_back(std::make_tuple(substr, index[substr].size(), i));
 		start = i;
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (const std::tuple<std::string, size_t, size_t>& x1, const std::tuple<std::string, size_t, size_t>& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
@@ -205,7 +205,7 @@ size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::v
 		if((i - j + 1) > max_code_len || j == -1)
 			break;
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (const std::tuple<std::string, size_t, size_t>& x1, const std::tuple<std::string, size_t, size_t>& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
@@ -237,7 +237,7 @@ size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::u
 		if((i - j + 1) > max_code_len || j == -1)
 			break;
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (std::tuple<std::string, size_t, size_t> x1, std::tuple<std::string, size_t, size_t> x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (const std::tuple<std::string, size_t, size_t>& x1, const std::tuple<std::string, size_t, size_t>& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
