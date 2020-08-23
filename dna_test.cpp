@@ -6,20 +6,6 @@
 #include<unordered_map>
 #include"utils.h"
 
-void calc_symbol_probs(std::string& ref_seq, std::vector<char>& alphabet, std::vector<float>& symbol_probs)
-{
-	std::unordered_map<char, int> symbol_to_index;
-	for(int i = 0; i < alphabet.size(); ++i)
-		symbol_to_index.insert(std::make_pair(alphabet[i], i));
-
-	for(int i = 0; i < ref_seq.size(); ++i)
-		++symbol_probs[symbol_to_index[ref_seq[i]]];
-
-	for(int i = 0; i < alphabet.size(); ++i)
-		symbol_probs[symbol_to_index[ref_seq[i]]] /= ref_seq.size();
-}
-
-
 int main(int argc, char** argv)
 {
 	if(argc < 6)
@@ -82,7 +68,6 @@ int main(int argc, char** argv)
 				break;
 		}
 		if(fb_svs_match_pos != str_find_match_pos)
-//			std::cout << "failed test case - " << query << std::endl;
 			failed_tests.push_back(std::make_pair(query, i));
 	}
 	std::cout << failed_tests.size() << " failed test cases" << std::endl;

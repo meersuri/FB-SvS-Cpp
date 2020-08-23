@@ -578,3 +578,17 @@ void write_codebook(std::string file, std::vector<std::string>& codebook, std::v
 	for(int i =0; i < codebook.size(); ++i)
 		ofs << codebook[i] << std::endl;
 }
+
+void calc_symbol_probs(std::string& ref_seq, std::vector<char>& alphabet, std::vector<float>& symbol_probs)
+{
+	std::unordered_map<char, int> symbol_to_index;
+	for(int i = 0; i < alphabet.size(); ++i)
+		symbol_to_index.insert(std::make_pair(alphabet[i], i));
+
+	for(int i = 0; i < ref_seq.size(); ++i)
+		++symbol_probs[symbol_to_index[ref_seq[i]]];
+
+	for(int i = 0; i < alphabet.size(); ++i)
+		symbol_probs[symbol_to_index[ref_seq[i]]] /= ref_seq.size();
+}
+
