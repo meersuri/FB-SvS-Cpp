@@ -4,6 +4,7 @@
 #include<string>
 #include<unordered_map>
 #include<unordered_set>
+#include<fstream>
 #include<tuple>
 
 void gen_k_grams_code(size_t k, const std::vector<char>& alphabet, std::vector<std::string>& code)
