@@ -23,7 +23,7 @@ int main()
 	std::cout<<std::endl;
 	std::unordered_map<std::string, std::vector<size_t>> index;
 	std::vector<std::string> code;
-	gen_k_grams_code(3, alphabet, code);
+	gen_k_grams_code(k, alphabet, code);
 	build_index(ref_seq, code, index);
 	std::cout << "index (key, posting list size) -" << std::endl;
 	for(auto it = index.begin(); it != index.end(); ++it)
