@@ -302,7 +302,7 @@ int fb_svs_k_grams(std::string& query, std::unordered_map<std::string, std::vect
 	size_t bwd_parse_start = parse_query_bwd_k_grams(query, index, max_code_len, parsing_bwd);
 	if(parsing_fwd.size() == 0 || parsing_bwd.size() == 0)
 	{
-//		std::cout << "fb-svs failed due to one or more empty parsings" << std::endl;
+//		std::cout << "fb-svs failed due to one or more empty parsings" << '\n';
 		return -1;
 	}
 	std::vector<size_t> match_pos_fwd;
@@ -314,7 +314,7 @@ int fb_svs_k_grams(std::string& query, std::unordered_map<std::string, std::vect
 		fwd_parse_len += std::get<0>(parsing_fwd[i]).length();
 	if(fwd_parse_start + fwd_parse_len - 1 < bwd_parse_start)
 	{
-//		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << std::endl;
+//		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << '\n';
 		return -2;
 	}
 	std::vector<size_t> found;
@@ -350,7 +350,7 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_
 	size_t bwd_parse_start = parse_query_bwd(query, index, max_code_len, parsing_bwd);
 	if(parsing_fwd.size() == 0 || parsing_bwd.size() == 0)
 	{
-//		std::cout << "fb-svs failed due to one or more empty parsings" << std::endl;
+//		std::cout << "fb-svs failed due to one or more empty parsings" << '\n';
 		return -1;
 	}
 	std::vector<size_t> match_pos_fwd;
@@ -362,7 +362,7 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_
 		fwd_parse_len += std::get<0>(parsing_fwd[i]).length();
 	if(fwd_parse_start + fwd_parse_len - 1 < bwd_parse_start)
 	{
-		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << std::endl;
+		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << '\n';
 		return -2;
 	}
 	std::vector<size_t> found;
@@ -398,7 +398,7 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::unordered_se
 	size_t bwd_parse_start = parse_query_bwd(query, index, max_code_len, parsing_bwd);
 	if(parsing_fwd.size() == 0 || parsing_bwd.size() == 0)
 	{
-//		std::cout << "fb-svs failed due to one or more empty parsings" << std::endl;
+//		std::cout << "fb-svs failed due to one or more empty parsings" << '\n';
 		return -1;
 	}
 	std::unordered_set<size_t> match_pos_fwd;
@@ -410,7 +410,7 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::unordered_se
 		fwd_parse_len += std::get<0>(parsing_fwd[i]).length();
 	if(fwd_parse_start + fwd_parse_len - 1 < bwd_parse_start)
 	{
-//		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << std::endl;
+//		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << '\n';
 		return -2;
 	}
 	int match_offset = 0;
@@ -511,24 +511,24 @@ void write_index(std::string file, std::unordered_map<std::string, std::vector<s
 	std::ofstream ofs(file);
 	for(auto it = index.begin(); it != index.end(); ++it)
 	{
-		ofs << it->first << std::endl;
+		ofs << it->first << '\n';
 		size_t posting_list_len = it->second.size();
-		ofs << std::to_string(posting_list_len) << std::endl;
+		ofs << std::to_string(posting_list_len) << '\n';
 		for(int i = 0; i < posting_list_len; ++i)
 			ofs << std::to_string(it->second[i]) << " ";
-		ofs << std::endl;
+		ofs << '\n';
 	}
 }
 
 void write_codebook(std::string file, std::vector<std::string>& codebook, std::vector<char>& alphabet)
 {
 	std::ofstream ofs(file);
-	ofs << alphabet.size() << std::endl;
+	ofs << alphabet.size() << '\n';
 	for(int i = 0; i < alphabet.size(); ++i)
 		ofs << alphabet[i] << " ";
-	ofs << std::endl;
+	ofs << '\n';
 	for(int i =0; i < codebook.size(); ++i)
-		ofs << codebook[i] << std::endl;
+		ofs << codebook[i] << '\n';
 }
 
 void calc_symbol_probs(std::string& ref_seq, std::vector<char>& alphabet, std::vector<float>& symbol_probs)
