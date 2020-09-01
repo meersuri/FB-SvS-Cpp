@@ -7,7 +7,8 @@
 #include<fstream>
 #include<tuple>
 
-void gen_k_grams_code(size_t k, const std::vector<char>& alphabet, std::vector<std::string>& code)
+void gen_k_grams_code(size_t k, const std::vector<char>& alphabet,
+		std::vector<std::string>& code)
 {
 	size_t alphabet_size = alphabet.size();
 	for(int i = 0; i < alphabet.size(); ++i)
@@ -28,7 +29,8 @@ void gen_k_grams_code(size_t k, const std::vector<char>& alphabet, std::vector<s
 	}
 }
 
-void build_index(std::string& ref_seq, std::vector<std::string>& code, std::unordered_map<std::string, std::vector<size_t>>& index)
+void build_index(std::string& ref_seq, std::vector<std::string>& code,
+	       	std::unordered_map<std::string, std::vector<size_t>>& index)
 {
 	for(int i = 0; i < code.size(); ++i)
 		index[code[i]] = std::vector<size_t>();
@@ -51,7 +53,8 @@ void build_index(std::string& ref_seq, std::vector<std::string>& code, std::unor
 	}
 }
 
-void build_index(std::string& ref_seq, std::vector<std::string>& code, std::unordered_map<std::string, std::unordered_set<size_t>>& index)
+void build_index(std::string& ref_seq, std::vector<std::string>& code,
+	       	std::unordered_map<std::string, std::unordered_set<size_t>>& index)
 {
 	for(int i = 0; i < code.size(); ++i)
 		index[code[i]] = std::unordered_set<size_t>();
@@ -74,7 +77,9 @@ void build_index(std::string& ref_seq, std::vector<std::string>& code, std::unor
 	}
 }
 
-size_t parse_query_fwd_k_grams(const std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, size_t k, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
+size_t parse_query_fwd_k_grams(const std::string& query,
+	       	std::unordered_map<std::string, std::vector<size_t>>& index,
+	       	size_t k, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
 	size_t start = query.size();
 	std::string substr;
@@ -89,11 +94,14 @@ size_t parse_query_fwd_k_grams(const std::string& query, std::unordered_map<std:
 		substr = query.substr(i, k);
 		parsing.emplace_back(substr, index[substr].size(), i);
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (const auto& x1, const auto& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (const auto& x1, const auto& x2)
+		       	{return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
-size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, size_t max_code_len, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
+size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string,
+	       	std::vector<size_t>>& index, size_t max_code_len,
+	       	std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
 	size_t start = query.size();
 	int i = 0;
@@ -121,11 +129,14 @@ size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string,
 		if((j - i + 1) > max_code_len || j == query.size())
 			break;
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (const auto& x1, const auto& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (const auto& x1, const auto& x2)
+		       	{return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
-size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string, std::unordered_set<size_t>>& index, size_t max_code_len, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
+size_t parse_query_fwd(const std::string& query,
+	       	std::unordered_map<std::string, std::unordered_set<size_t>>& index,
+	       	size_t max_code_len, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
 	size_t start = query.size();
 	int i = 0;
@@ -153,11 +164,14 @@ size_t parse_query_fwd(const std::string& query, std::unordered_map<std::string,
 		if((j - i + 1) > max_code_len || j == query.size())
 			break;
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (const auto& x1, const auto& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (const auto& x1, const auto& x2)
+		       	{return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
-size_t parse_query_bwd_k_grams(std::string query, std::unordered_map<std::string, std::vector<size_t>>& index, size_t k, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
+size_t parse_query_bwd_k_grams(std::string query,
+	       	std::unordered_map<std::string, std::vector<size_t>>& index,
+	       	size_t k, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
 	size_t start = query.size();
 	std::string substr;
@@ -173,11 +187,14 @@ size_t parse_query_bwd_k_grams(std::string query, std::unordered_map<std::string
 		parsing.emplace_back(substr, index[substr].size(), i);
 		start = i;
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (const auto& x1, const auto& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [] (const auto& x1, const auto& x2)
+		       	{return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
-size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::vector<size_t>>& index, size_t max_code_len, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
+size_t parse_query_bwd(std::string query,
+	       	std::unordered_map<std::string, std::vector<size_t>>& index,
+	       	size_t max_code_len, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
 	size_t start = query.size();
 	int i = query.size() - 1;
@@ -205,11 +222,14 @@ size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::v
 		if((i - j + 1) > max_code_len || j == -1)
 			break;
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (const auto& x1, const auto& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [](const auto& x1, const auto& x2)
+		       	{return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
-size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::unordered_set<size_t>>& index, size_t max_code_len, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
+size_t parse_query_bwd(std::string query,
+	       	std::unordered_map<std::string, std::unordered_set<size_t>>& index,
+	       	size_t max_code_len, std::vector<std::tuple<std::string, size_t, size_t>>& parsing)
 {
 	size_t start = query.size();
 	int i = query.size() - 1;
@@ -237,11 +257,14 @@ size_t parse_query_bwd(std::string query, std::unordered_map<std::string, std::u
 		if((i - j + 1) > max_code_len || j == -1)
 			break;
 	}
-	std::sort(parsing.begin(), parsing.end(), [] (const auto& x1, const auto& x2) {return std::get<1>(x1) < std::get<1>(x2);}); 
+	std::sort(parsing.begin(), parsing.end(), [](const auto& x1, const auto& x2)
+		       	{return std::get<1>(x1) < std::get<1>(x2);}); 
 	return start;
 }
 
-void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::unordered_map<std::string, std::vector<size_t>>& index, std::vector<size_t>& match_pos, size_t start)
+void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing,
+	       	std::unordered_map<std::string, std::vector<size_t>>& index,
+	       	std::vector<size_t>& match_pos, size_t start)
 {
 	if(parsing.size() == 0)
 		return;
@@ -267,7 +290,9 @@ void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::uno
 		match_pos[i] -= std::get<2>(parsing[0]) - start;
 }
 
-void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::unordered_map<std::string, std::unordered_set<size_t>>& index, std::unordered_set<size_t>& match_pos, size_t start)
+void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing,
+	       	std::unordered_map<std::string, std::unordered_set<size_t>>& index,
+	       	std::unordered_set<size_t>& match_pos, size_t start)
 {
 	if(parsing.size() == 0)
 		return;
@@ -294,7 +319,9 @@ void svs(std::vector<std::tuple<std::string, size_t, size_t>>& parsing, std::uno
 	match_pos = match_pos_final;
 }
 
-int fb_svs_k_grams(std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, size_t max_code_len, std::vector<size_t>& match_pos) 
+int fb_svs_k_grams(std::string& query, std::unordered_map<std::string,
+	       	std::vector<size_t>>& index, size_t max_code_len,
+	       	std::vector<size_t>& match_pos) 
 {
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_fwd;
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_bwd;
@@ -314,7 +341,8 @@ int fb_svs_k_grams(std::string& query, std::unordered_map<std::string, std::vect
 		fwd_parse_len += std::get<0>(parsing_fwd[i]).length();
 	if(fwd_parse_start + fwd_parse_len - 1 < bwd_parse_start)
 	{
-//		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << '\n';
+//		std::cout << "fb-svs failed due to no overlap between" 
+//		"forward and backward parse" << '\n';
 		return -2;
 	}
 	std::vector<size_t> found;
@@ -342,7 +370,8 @@ int fb_svs_k_grams(std::string& query, std::unordered_map<std::string, std::vect
 	return match_pos.size();
 }
 
-int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index, size_t max_code_len, std::vector<size_t>& match_pos) 
+int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_t>>& index,
+	       	size_t max_code_len, std::vector<size_t>& match_pos) 
 {
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_fwd;
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_bwd;
@@ -362,7 +391,8 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_
 		fwd_parse_len += std::get<0>(parsing_fwd[i]).length();
 	if(fwd_parse_start + fwd_parse_len - 1 < bwd_parse_start)
 	{
-		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << '\n';
+		std::cout << "fb-svs failed due to no overlap between"
+		       	"forward and backward parse" << '\n';
 		return -2;
 	}
 	std::vector<size_t> found;
@@ -390,7 +420,9 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::vector<size_
 	return match_pos.size();
 }
 
-int fb_svs(std::string& query, std::unordered_map<std::string, std::unordered_set<size_t>>& index, size_t max_code_len, std::unordered_set<size_t>& match_pos) 
+int fb_svs(std::string& query,
+	       	std::unordered_map<std::string, std::unordered_set<size_t>>& index,
+	       	size_t max_code_len, std::unordered_set<size_t>& match_pos) 
 {
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_fwd;
 	std::vector<std::tuple<std::string, size_t, size_t>> parsing_bwd;
@@ -410,7 +442,8 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::unordered_se
 		fwd_parse_len += std::get<0>(parsing_fwd[i]).length();
 	if(fwd_parse_start + fwd_parse_len - 1 < bwd_parse_start)
 	{
-//		std::cout << "fb-svs failed due to no overlap between forward and backward parse" << '\n';
+//		std::cout << "fb-svs failed due to no overlap between"
+//		"forward and backward parse" << '\n';
 		return -2;
 	}
 	int match_offset = 0;
@@ -442,7 +475,8 @@ int fb_svs(std::string& query, std::unordered_map<std::string, std::unordered_se
 	return match_pos.size();
 }
 
-void load_index(std::string file, std::unordered_map<std::string, std::vector<size_t>>& index)
+void load_index(std::string file, std::unordered_map<std::string,
+	       	std::vector<size_t>>& index)
 {
 	std::ifstream ifs(file);
 	std::string buffer;
@@ -479,7 +513,8 @@ void load_queries(std::string file, std::vector<std::string>& queries)
 	}
 }
 
-void load_codebook(std::string file, std::vector<std::string>& codebook, std::vector<char>& alphabet)
+void load_codebook(std::string file, std::vector<std::string>& codebook,
+	       	std::vector<char>& alphabet)
 {
 	std::ifstream ifs(file);
 	size_t alphabet_size;
@@ -506,7 +541,8 @@ void load_ref_seq(std::string file, std::string& ref_seq)
 	}
 }
 
-void write_index(std::string file, std::unordered_map<std::string, std::vector<size_t>>& index)
+void write_index(std::string file, std::unordered_map<std::string,
+	       	std::vector<size_t>>& index)
 {
 	std::ofstream ofs(file);
 	for(auto it = index.begin(); it != index.end(); ++it)
@@ -520,7 +556,8 @@ void write_index(std::string file, std::unordered_map<std::string, std::vector<s
 	}
 }
 
-void write_codebook(std::string file, std::vector<std::string>& codebook, std::vector<char>& alphabet)
+void write_codebook(std::string file, std::vector<std::string>& codebook,
+	       	std::vector<char>& alphabet)
 {
 	std::ofstream ofs(file);
 	ofs << alphabet.size() << '\n';
@@ -531,7 +568,8 @@ void write_codebook(std::string file, std::vector<std::string>& codebook, std::v
 		ofs << codebook[i] << '\n';
 }
 
-void calc_symbol_probs(std::string& ref_seq, std::vector<char>& alphabet, std::vector<float>& symbol_probs)
+void calc_symbol_probs(std::string& ref_seq, std::vector<char>& alphabet,
+	       	std::vector<float>& symbol_probs)
 {
 	std::unordered_map<char, int> symbol_to_index;
 	for(int i = 0; i < alphabet.size(); ++i)
